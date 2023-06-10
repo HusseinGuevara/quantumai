@@ -1,7 +1,6 @@
 const User = require('./../models/userModel.js');
 const AppError = require('./../utils/appError.js');
 const catchAsync = require('./../utils/catchAsync.js');
-const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 // This will create a JWT token for the user
@@ -48,10 +47,12 @@ exports.login = catchAsync(async (req, res, next) => {
     if(!email || !password) {
         return next(new AppError('Please provide email and password!'), 400);
     }
+    
     // 2) Check if user exist and password is correct 
     const user = await User.findOne({ email }).select('+password');
 
     if(!user || !(await user.correctPassword( password, user.password))) {
+        console.log(user)
         return next(new AppError('Incorrect email or password.', 401));
     }
     
